@@ -337,39 +337,40 @@ for filename in sys.argv[1:]:
     plt.cla()
 
     delta_f = f1 - f0
-    q_tr=pi*(D_n**2-(D_n-2*s_st)**2)/4*Ro_st*g
-    q_iz=2*pi**4*((delta_f)*E*J+0.0938*(f1**3-f0**3)*E*F)/L**4
-    k_n=get_k_n(D_n,p)
-    Ksi_N=pi**2*(f1**2-f0**2)*E/(4*L**2)
-    D_vn=D_n-2*s_st
-    Ksi_kc_a=p_x*D_vn/(2*s_st)
-    Ksi_kc_b=p*D_vn/(2*s_st)
-# максимальные напряжение на переукладываемом участке чтобы отсечь напряжения которые не входят в переукладку
-# находим номер первой отметки Х которая попадает под переукладку x>x0
+    q_tr = pi * (D_n**2 - (D_n - 2 * s_st)**2) / 4 * Ro_st * g
+    q_iz = 2 * pi**4 * ((delta_f) * E * J + 0.0938 * (f1**3 - f0**3) * E * F) / L**4
+    k_n = get_k_n(D_n, p)
+    Ksi_N = pi**2 * (f1**2 - f0**2) * E / (4 * L**2)
+    D_vn = D_n - 2 * s_st
+    Ksi_kc_a = p_x * D_vn / (2 * s_st)
+    Ksi_kc_b = p * D_vn / (2 * s_st)
+
+    # максимальные напряжение на переукладываемом участке чтобы отсечь
+    # напряжения которые не входят в переукладку
+    # находим номер первой отметки Х которая попадает под переукладку x>x0
     for i in range(len(xd)):
-        if xd[i]>x0:
+        if xd[i] > x0:
             break
 # находим номер последней отметки Х которая попадает под переукладку x<x0+L
-    for j in range(len(xd)-1,0,-1):
-        if xd[j]<x0+L:
+    for j in range(len(xd) - 1, 0, -1):
+        if xd[j] < x0 + L:
             break
-    #print(i,j)
-            
-    Ksi_s_max=max(abs(x) for x in Ksi_sum[i-1:j+1])
-    Ksi_pr_n_a=Ksi_N+0.3*Ksi_kc_a-alpha*delta_t_max*E-Ksi_s_max*10**6
-    Ksi_pr_n_b=Ksi_N+0.3*Ksi_kc_b-alpha*delta_t_min*E+Ksi_s_max*10**6
-    psi3=(1-0.75*(Ksi_kc_a/(m*sigma_t/(0.9*k_n)))**2)**0.5-0.5*Ksi_kc_a/(m*sigma_t/(0.9*k_n))
-    Usl_prochnosti=m*sigma_t/(0.9*k_n)
 
-    n_gruz=ceil((pi/4*k_n_v*D_n**2*g*Ro_vod-q_tr+k_n_v*q_iz)*L_ballast/(n_b*(Ro_bet-k_n_v*Ro_vod)*V_gruza*g))
-    l_shag=L_ballast/n_gruz
-    
-    L_op_shag=(12*W*sigma_t/(q_tr*k_n))**0.5
+    Ksi_s_max = max(abs(x) for x in Ksi_sum[i - 1:j + 1])
+    Ksi_pr_n_a = Ksi_N + 0.3 * Ksi_kc_a - alpha * delta_t_max * E - Ksi_s_max * 10**6
+    Ksi_pr_n_b = Ksi_N + 0.3 * Ksi_kc_b - alpha * delta_t_min * E + Ksi_s_max * 10**6
+    psi3 = (1 - 0.75 * (Ksi_kc_a / (m * sigma_t / (0.9 * k_n)))**2)**0.5 - 0.5 * Ksi_kc_a / (m * sigma_t / (0.9 * k_n))
+    Usl_prochnosti = m * sigma_t / (0.9 * k_n)
+
+    n_gruz = ceil((pi / 4 * k_n_v * D_n**2 * g * Ro_vod - q_tr + k_n_v * q_iz) * L_ballast / (n_b * (Ro_bet - k_n_v * Ro_vod) * V_gruza * g))
+    l_shag = L_ballast / n_gruz
+
+    L_op_shag = (12 * W * sigma_t / (q_tr * k_n))**0.5
     sigma_i = max(abs(x) for x in Ksi_y_glad)
 
     plt.title('Результаты расчетов')
-    plt.ylim( -130, 190 ) 
-    plt.xlim( 0, 400 ) 
+    plt.ylim(-130, 190)
+    plt.xlim(0, 400)
     plt.text(50,180,r'$D_n=%.2fм, \delta=%.4fм, r_{средний}=%0.3fм, P_{раб}=%.1fМПа, P_x=%.1fМПа, R_2^н=%dМПа$' % (D_n, s_st, r_sr, p/10**6, p_x/10**6, sigma_t/10**6))
     plt.text(50,160,r'Участок переукладки: от %d м до %d м (длина %d м)' % (x0,x0+L,L))
     plt.text(50,140,r'$f_0=%0.2f м, f_1=%0.2f м, \Delta f=%0.2f м$' % (f0,f1, delta_f))
